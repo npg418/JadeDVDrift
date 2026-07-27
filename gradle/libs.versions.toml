@@ -1,0 +1,19 @@
+[versions]
+minecraft = "1.20.1"
+minecraftRange = "[1.20.1,1.21)"
+forge = "47.4.22"
+forgeRange = "[47,)"
+forgeGradle = "[6.0,6.2)"
+mixin = "0.8.5"
+mixinGradle = "0.7.+"
+parchment = "2023.09.03"
+parchmentGradle = "1.+"
+
+[libraries]
+forge = { group = "net.minecraftforge", name = "forge" }
+mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
+
+[plugins]
+forgeGradle = { id = "net.minecraftforge.gradle", version.ref = "forgeGradle" }
+mixinGradle = { id = "org.spongepowered.mixin", version.ref = "mixinGradle" }
+parchmentGradle = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "parchmentGradle" }
