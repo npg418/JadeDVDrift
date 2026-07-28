@@ -66,15 +66,9 @@ sourceSets.main.get().resources {
 }
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven("https://cursemaven.com") {
-                name = "CurseMaven"
-            }
-        }
-        filter {
-            includeGroup("curse.maven")
-        }
+    maven("https://cursemaven.com") {
+        name = "CurseMaven"
+        content { includeGroup("curse.maven") }
     }
 }
 
@@ -85,7 +79,7 @@ dependencies {
         }
     }
     annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
-    implementation(libs.jade)
+    implementation(fg.deobf(libs.jade))
 }
 
 tasks.named<ProcessResources>("processResources") {
