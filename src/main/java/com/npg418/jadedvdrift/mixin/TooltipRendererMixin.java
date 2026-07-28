@@ -68,48 +68,51 @@ public class TooltipRendererMixin {
         jadeDVDrift$dvdX += velX * jadeDVDrift$dirX * dt;
         jadeDVDrift$dvdY += velY * jadeDVDrift$dirY * dt;
 
-        boolean bounced = false;
         if (jadeDVDrift$dvdX < 0) {
             jadeDVDrift$dvdX = 0;
             jadeDVDrift$dirX = 1.0;
-            bounced = true;
+            jadeDVDrift$applyBounceColor();
         } else if (jadeDVDrift$dvdX + w > screenW) {
             jadeDVDrift$dvdX = screenW - w;
             jadeDVDrift$dirX = -1.0;
-            bounced = true;
+            jadeDVDrift$applyBounceColor();
         }
 
         if (jadeDVDrift$dvdY < 0) {
             jadeDVDrift$dvdY = 0;
             jadeDVDrift$dirY = 1.0;
-            bounced = true;
+            jadeDVDrift$applyBounceColor();
         } else if (jadeDVDrift$dvdY + h > screenH) {
             jadeDVDrift$dvdY = screenH - h;
             jadeDVDrift$dirY = -1.0;
-            bounced = true;
-        }
-
-        if (bounced) {
-            jadeDVDrift$hue = (jadeDVDrift$hue + 0.16666667f) % 1.0f;
-            int color = java.awt.Color.HSBtoRGB(jadeDVDrift$hue, 0.85f, 1.0f) | 0xFF000000;
-            float bgHue = (jadeDVDrift$hue + 0.5f) % 1.0f;
-            int bgColor = java.awt.Color.HSBtoRGB(bgHue, 0.85f, 1.0f) | 0xFF000000;
-            Theme theme = IThemeHelper.get().theme();
-            theme.titleColor = color;
-            theme.normalColor = color;
-            theme.infoColor = color;
-            theme.successColor = color;
-            theme.warningColor = color;
-            theme.dangerColor = color;
-            theme.failureColor = color;
-            theme.backgroundColor = bgColor;
-            theme.borderColor[0] = color;
-            theme.borderColor[1] = color;
-            theme.borderColor[2] = color;
-            theme.borderColor[3] = color;
-            theme.boxBorderColor = color;
+            jadeDVDrift$applyBounceColor();
         }
 
         realRect.setPosition((int) jadeDVDrift$dvdX, (int) jadeDVDrift$dvdY);
+    }
+
+    @Unique
+    private static void jadeDVDrift$applyBounceColor() {
+        if (!Config.COLOR_ENABLE.get()) return;
+        double step = Config.HUE_STEP.get();
+        if (step == 0.0) return;
+        jadeDVDrift$hue = (jadeDVDrift$hue + (float) step) % 1.0f;
+        int color = java.awt.Color.HSBtoRGB(jadeDVDrift$hue, 0.85f, 1.0f) | 0xFF000000;
+        float bgHue = (jadeDVDrift$hue + 0.5f) % 1.0f;
+        int bgColor = java.awt.Color.HSBtoRGB(bgHue, 0.85f, 1.0f) | 0xFF000000;
+        Theme theme = IThemeHelper.get().theme();
+        theme.titleColor = color;
+        theme.normalColor = color;
+        theme.infoColor = color;
+        theme.successColor = color;
+        theme.warningColor = color;
+        theme.dangerColor = color;
+        theme.failureColor = color;
+        theme.backgroundColor = bgColor;
+        theme.borderColor[0] = color;
+        theme.borderColor[1] = color;
+        theme.borderColor[2] = color;
+        theme.borderColor[3] = color;
+        theme.boxBorderColor = color;
     }
 }
