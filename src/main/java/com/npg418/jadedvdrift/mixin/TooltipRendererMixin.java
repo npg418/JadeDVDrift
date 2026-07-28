@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import snownee.jade.api.theme.IThemeHelper;
+import snownee.jade.api.theme.Theme;
 import snownee.jade.overlay.TooltipRenderer;
 
 @Mixin(TooltipRenderer.class)
@@ -32,6 +34,10 @@ public class TooltipRendererMixin {
     private static double jadeDVDrift$dirY = 1.0;
     @Unique
     private static long jadeDVDrift$lastNanos = -1;
+
+    /* color-cycling state */
+    @Unique
+    private static float jadeDVDrift$hue = 0.0f;
 
     @Inject(method = "recalculateRealRect", at = @At("RETURN"), remap = false)
     private void jade$dvdBounce(CallbackInfo ci) {
@@ -62,20 +68,46 @@ public class TooltipRendererMixin {
         jadeDVDrift$dvdX += velX * jadeDVDrift$dirX * dt;
         jadeDVDrift$dvdY += velY * jadeDVDrift$dirY * dt;
 
+        boolean bounced = false;
         if (jadeDVDrift$dvdX < 0) {
             jadeDVDrift$dvdX = 0;
             jadeDVDrift$dirX = 1.0;
+            bounced = true;
         } else if (jadeDVDrift$dvdX + w > screenW) {
             jadeDVDrift$dvdX = screenW - w;
             jadeDVDrift$dirX = -1.0;
+            bounced = true;
         }
 
         if (jadeDVDrift$dvdY < 0) {
             jadeDVDrift$dvdY = 0;
             jadeDVDrift$dirY = 1.0;
+            bounced = true;
         } else if (jadeDVDrift$dvdY + h > screenH) {
             jadeDVDrift$dvdY = screenH - h;
             jadeDVDrift$dirY = -1.0;
+            bounced = true;
+        }
+
+        if (bounced) {
+            jadeDVDrift$hue = (jadeDVDrift$hue + 0.16666667f) % 1.0f;
+            int color = java.awt.Color.HSBtoRGB(jadeDVDrift$hue, 0.85f, 1.0f) | 0xFF000000;
+            float bgHue = (jadeDVDrift$hue + 0.5f) % 1.0f;
+            int bgColor = java.awt.Color.HSBtoRGB(bgHue, 0.85f, 1.0f) | 0xFF000000;
+            Theme theme = IThemeHelper.get().theme();
+            theme.titleColor = color;
+            theme.normalColor = color;
+            theme.infoColor = color;
+            theme.successColor = color;
+            theme.warningColor = color;
+            theme.dangerColor = color;
+            theme.failureColor = color;
+            theme.backgroundColor = bgColor;
+            theme.borderColor[0] = color;
+            theme.borderColor[1] = color;
+            theme.borderColor[2] = color;
+            theme.borderColor[3] = color;
+            theme.boxBorderColor = color;
         }
 
         realRect.setPosition((int) jadeDVDrift$dvdX, (int) jadeDVDrift$dvdY);
