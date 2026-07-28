@@ -9,9 +9,14 @@ mixinGradle = "0.7.+"
 parchment = "2023.09.03"
 parchmentGradle = "1.+"
 
+jade = "8479276" # 11.13.3
+jadeRange = "[11,12)"
+
 [libraries]
 forge = { group = "net.minecraftforge", name = "forge" }
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
+
+jade = { group = "curse.maven", name = "jade-324717", version.ref = "jade" }
 
 [plugins]
 forgeGradle = { id = "net.minecraftforge.gradle", version.ref = "forgeGradle" }
