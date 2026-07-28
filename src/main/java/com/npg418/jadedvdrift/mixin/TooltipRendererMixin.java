@@ -1,5 +1,6 @@
 package com.npg418.jadedvdrift.mixin;
 
+import com.npg418.jadedvdrift.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,23 +13,29 @@ import snownee.jade.overlay.TooltipRenderer;
 
 @Mixin(TooltipRenderer.class)
 public class TooltipRendererMixin {
+
     @Shadow(remap = false)
     private Rect2i realRect;
+
+    @Unique
+    private static final double BASE_VEL_X = 40.0;
+    @Unique
+    private static final double BASE_VEL_Y = 28.0;
 
     @Unique
     private static double jadeDVDrift$dvdX = -1;
     @Unique
     private static double jadeDVDrift$dvdY = -1;
     @Unique
-    private static double jadeDVDrift$dvdVelX = 40.0;
+    private static double jadeDVDrift$dirX = 1.0;
     @Unique
-    private static double jadeDVDrift$dvdVelY = 28.0;
+    private static double jadeDVDrift$dirY = 1.0;
     @Unique
     private static long jadeDVDrift$lastNanos = -1;
 
     @Inject(method = "recalculateRealRect", at = @At("RETURN"), remap = false)
     private void jade$dvdBounce(CallbackInfo ci) {
-        if (realRect == null) return;
+        if (realRect == null || !Config.ENABLE.get()) return;
 
         Minecraft mc = Minecraft.getInstance();
         int screenW = mc.getWindow().getGuiScaledWidth();
@@ -48,23 +55,27 @@ public class TooltipRendererMixin {
         dt = Math.min(dt, 0.1);
         jadeDVDrift$lastNanos = now;
 
-        jadeDVDrift$dvdX += jadeDVDrift$dvdVelX * dt;
-        jadeDVDrift$dvdY += jadeDVDrift$dvdVelY * dt;
+        double amp = Config.SPEED_AMPLIFIER.get();
+        double velX = BASE_VEL_X * amp;
+        double velY = BASE_VEL_Y * amp;
+
+        jadeDVDrift$dvdX += velX * jadeDVDrift$dirX * dt;
+        jadeDVDrift$dvdY += velY * jadeDVDrift$dirY * dt;
 
         if (jadeDVDrift$dvdX < 0) {
             jadeDVDrift$dvdX = 0;
-            jadeDVDrift$dvdVelX = Math.abs(jadeDVDrift$dvdVelX);
+            jadeDVDrift$dirX = 1.0;
         } else if (jadeDVDrift$dvdX + w > screenW) {
             jadeDVDrift$dvdX = screenW - w;
-            jadeDVDrift$dvdVelX = -Math.abs(jadeDVDrift$dvdVelX);
+            jadeDVDrift$dirX = -1.0;
         }
 
         if (jadeDVDrift$dvdY < 0) {
             jadeDVDrift$dvdY = 0;
-            jadeDVDrift$dvdVelY = Math.abs(jadeDVDrift$dvdVelY);
+            jadeDVDrift$dirY = 1.0;
         } else if (jadeDVDrift$dvdY + h > screenH) {
             jadeDVDrift$dvdY = screenH - h;
-            jadeDVDrift$dvdVelY = -Math.abs(jadeDVDrift$dvdVelY);
+            jadeDVDrift$dirY = -1.0;
         }
 
         realRect.setPosition((int) jadeDVDrift$dvdX, (int) jadeDVDrift$dvdY);

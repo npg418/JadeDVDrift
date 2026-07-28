@@ -80,6 +80,7 @@ dependencies {
     }
     annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
     implementation(fg.deobf(libs.jade))
+    runtimeOnly(fg.deobf(libs.configured))
 }
 
 tasks.named<ProcessResources>("processResources") {

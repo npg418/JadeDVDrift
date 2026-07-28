@@ -12,11 +12,15 @@ parchmentGradle = "1.+"
 jade = "8479276" # 11.13.3
 jadeRange = "[11,12)"
 
+configured = "5180900" # 2.2.3
+
 [libraries]
 forge = { group = "net.minecraftforge", name = "forge" }
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 
 jade = { group = "curse.maven", name = "jade-324717", version.ref = "jade" }
+
+configured = { group = "curse.maven", name = "configured-457570", version.ref = "configured" }
 
 [plugins]
 forgeGradle = { id = "net.minecraftforge.gradle", version.ref = "forgeGradle" }
