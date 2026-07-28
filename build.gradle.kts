@@ -23,6 +23,8 @@ val forgeVersion: String = libs.versions.forge.get()
 val forgeVersionRange: String = libs.versions.forgeRange.get()
 val parchmentVersion: String = libs.versions.parchment.get()
 
+val jadeVersionRange: String = libs.versions.jadeRange.get()
+
 group = modGroupId
 version = modVersion
 
@@ -50,7 +52,7 @@ minecraft {
                 }
             }
         }
-        register("client")
+        create("client")
     }
 }
 
@@ -63,6 +65,19 @@ sourceSets.main.get().resources {
     srcDir("src/generated/resources")
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven("https://cursemaven.com") {
+                name = "CurseMaven"
+            }
+        }
+        filter {
+            includeGroup("curse.maven")
+        }
+    }
+}
+
 dependencies {
     minecraft(libs.forge) {
         version {
@@ -70,6 +85,7 @@ dependencies {
         }
     }
     annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
+    implementation(libs.jade)
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -84,7 +100,8 @@ tasks.named<ProcessResources>("processResources") {
         "mod_license" to modLicense,
         "mod_version" to modVersion,
         "mod_authors" to modAuthors,
-        "mod_description" to modDescription
+        "mod_description" to modDescription,
+        "jade_version_range" to jadeVersionRange
     )
     inputs.properties(replaceProperties)
     filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
