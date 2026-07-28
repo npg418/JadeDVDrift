@@ -2,11 +2,12 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.npg418.jadedvdrift.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "jadedvdrift.refmap.json",
   "mixins": [
   ],
   "client": [
+    "TooltipRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
